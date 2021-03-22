@@ -53,11 +53,7 @@ class DiseaseRobot(KnowledgeEngine):
         self.declare(Fact(severe_covid=True))
 
     @Rule(Fact(sick=True),
-<<<<<<< HEAD
         AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'travel_last_14','health_care_worker','interacted_with_covid') > 0))
-=======
-        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'travel_last_14','health_care_worker','interacted_with_covid') > 1))
->>>>>>> 393fdd39427e46959421ab97176a3f43fe580b72
     def interacted_with_covid(self, p):
         self.declare(Fact(interact_with_covid=True))
 
