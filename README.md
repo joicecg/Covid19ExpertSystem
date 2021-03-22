@@ -20,9 +20,9 @@ https://pypi.org/project/experta/
 
 ## Gejala
 - Malaria
-Benar : Batuk, Demam, Nyeri otot, Muntah-muntah, Pusing
+ - Benar : Batuk, Demam, Nyeri otot, Muntah-muntah, Pusing
 - Covid-19 (tanpa interaksi)
-Benar : Semua gejala jika lebih dari 4 gejala
+ - Benar : Semua gejala jika lebih dari 4 gejala
 - Covid-19 (interaksi)
-Benar : Semua gejala jika lebih dari 4 gejala dan pernah melakukan salah satu atau lebih dari indikator interaksi (berpegian 14 hari keluar negeri sebelumnya, petugas medis, keluarga pernah terdiagnosa covid-19 dalam 14 hari terakhir)
+ - Benar : Semua gejala jika lebih dari 4 gejala dan pernah melakukan salah satu atau lebih dari indikator interaksi (berpegian 14 hari keluar negeri sebelumnya, petugas medis, keluarga pernah terdiagnosa covid-19 dalam 14 hari terakhir)
 
