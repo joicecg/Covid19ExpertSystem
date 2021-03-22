@@ -33,35 +33,51 @@ class DiseaseRobot(KnowledgeEngine):
         self.declare(Fact(malaria=True))
 
     @Rule(Fact(sick=True),
-        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'headache', 'short_of_breath', 'loss_of_taste_smell', 'sore_throat', 'diare', 'fatigue') > 2))
+        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'cough','fever','headache', 'short_of_breath','loss_of_taste_smell','sore_throat','diare','fatigue') > 4))
     def covid_positive(self, p):
         self.declare(Fact(covid_positive=True))
     
     @Rule(Fact(sick=True),
-        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'cough', 'fever', 'headache', 'short_of_breath', 'loss_of_taste_smell', 'sore_throat', 'diare', 'fatigue', 'travel_last_14', 'health_care_worker', 'interacted_with_covid') == 0 ))
+        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'cough','fever','headache', 'short_of_breath','loss_of_taste_smell','sore_throat','diare','fatigue') < 4))
+    def general_syn(self, p):
+        self.declare(Fact(general_syn=True))
+    
+    @Rule(Fact(sick=True),
+        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'cough', 'fever', 'headache','vomiting','muscle_pain','short_of_breath', 'loss_of_taste_smell', 'sore_throat', 'diare', 'fatigue', 'travel_last_14', 'health_care_worker', 'interacted_with_covid') == 0 ))
     def covid_negative(self, p):
         self.declare(Fact(covid_negative=True))
 
     @Rule(Fact(sick=True),
-        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'travel_last_14', 'health_care_worker', 'interacted_with_covid', 'cough', 'fever') > 2))
-    def interact_with_covid(self, p):
+        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'travel_last_14','health_care_worker','interacted_with_covid') < 1))
+    def severe_covid(self, p):
+        self.declare(Fact(severe_covid=True))
+
+    @Rule(Fact(sick=True),
+        AS.p << Disease(), TEST(lambda p: SUMFIELDS(p, 'travel_last_14','health_care_worker','interacted_with_covid') > 1))
+    def interacted_with_covid(self, p):
         self.declare(Fact(interact_with_covid=True))
 
-    @Rule(Fact(sick=True),Fact(covid_positive=True),Fact(interact_with_covid=True))
+    @Rule(Fact(sick=True),Fact(covid_positive=True),Fact(severe_covid=True))
     def high_risk(self):
-        print("Anda memiliki indikasi terkena covid 19 sangat tinggi, silahkan segera ke rumah sakit untuk dicek dan diobati")
+        print("\nAnda memiliki resiko covid-19 yang tinggi dikarenakan anda memiliki gejala covid yang tinggi dan kamu tidak ada histori perjalanan dan keluarga yang terserang penyakit corona, sehingga kemungkinan anda terkena dari lingkungan \n")
+        print("Jauhi orang-orang sekitar dan segera pergi ke dokter untuk lakukan pengecekan lebih lanjut")
         self.declare(Fact(high_risk=True))
 
-    @Rule(Fact(sick=True),Fact(interact_with_covid=True),Fact(covid_positive=False))
-    def low_risk(self):
-        print("Anda memiliki indikasi terkena covid 19 rendah, tetapi berpeluang karena anda memiliki history berinteraksi dengan covid-19 atau keluarga anda terkena covid-19 atau anda baru pulang dari luar negeri, atau anda merupakan pekerja medis")
-        print("Silahkan ke rumah sakit untuk diperiksa")
-        self.declare(Fact(low_risk=True))
+    @Rule(Fact(sick=True),Fact(covid_positive=True),Fact(interact_with_covid=True))
+    def high_risk_interact(self):
+        print("\nAnda memiliki resiko Covid-19 yang amat tinggi dikarenakan anda memiliki gejala covid dan kamu mungkin pernah melakukan perjalanan keluar negeri, keluarga terkena covid-19 dan lingkunganmu terkontaminasi \n")
+        print("Segera kerumah sakit untuk diperiksa karena tingkat kemungkinan anda terserang amat tinggi")
+        self.declare(Fact(high_risk_interact=True))
 
     @Rule(Fact(sick=True),Fact(covid_negative=True))
     def no_risk(self):
-        print("Anda tidak memiliki gejala covid-19, silahkan konsultasi penyakit anda ke rumah sakit terdekat")
+        print("Anda tidak memiliki gejala covid-19 maupun maleria, silahkan konsultasi penyakit anda ke rumah sakit terdekat")
         self.declare(Fact(no_risk=True))
+    
+    @Rule(Fact(sick=True),Fact(general_syn=True),Fact(severe_covid=True))
+    def no_risk_covid(self):
+        print("Anda tidak memiliki gejala covid-19 maupun maleria, silahkan konsultasi penyakit anda ke rumah sakit terdekat")
+        self.declare(Fact(no_risk_covid=True))
 
 
 engine = DiseaseRobot()
@@ -136,9 +152,10 @@ if val14 == "Ya":
 else:
     val14 = False
 
-engine.declare(Disease(when_start_sick=int(val1),cough=val2,fever=val3,headache=val4,short_of_breath=val5,loss_of_taste_smell=val6,sore_throat=val7,diare=val8,fatigue=val9,travel_last_14=val10,health_care_worker=val11,interacted_with_covid=val12))
+engine.declare(Disease(when_start_sick=int(val1),cough=val2,fever=val3,muscle_pain=val4,vomiting=val5,headache=val6,short_of_breath=val7,loss_of_taste_smell=val8,sore_throat=val9,diare=val10,fatigue=val11,travel_last_14=val12,health_care_worker=val13,interacted_with_covid=val14))
 
 engine.run()
+
     
 
 
